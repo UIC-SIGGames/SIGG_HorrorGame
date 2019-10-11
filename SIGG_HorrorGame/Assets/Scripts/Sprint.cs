@@ -2,17 +2,46 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class NewBehaviourScript : MonoBehaviour
+public class Sprint : MonoBehaviour
 {
-    // Start is called before the first frame update
+    float Stamina = 5, maxStamina = 5;
+    float walkSpeed, runSpeed;
+    PlayerMove pm;
+    bool isRunning;
+
     void Start()
     {
+        pm = gameObject.GetComponent<PlayerMove>();
+        walkSpeed = pm.movement.maxForwardSpeed;
+        runSpeed = walkSpeed * 4;
         
     }
 
-    // Update is called once per frame
+    void SetRunning(bool isRunning)
+    {
+        this.isRunning = isRunning;
+        pm.movement.maxForwardSpeed = isRunning ? runSpeed : walkSpeed;
+    }
+
     void Update()
     {
-        
+        if (Input.GetKeyDown(KeyCode.LeftShift))
+            SetRunning(true);
+        if (Input.GetKeyUp(KeyCode.LeftShift))
+            SetRunning(false);
+
+        if (isRunning)
+        {
+            stamina -= Time.deltaTime;
+            if (stamina < 0)
+            {
+                stamina = 0;
+                SetRunning(false);
+            }
+            else if (stamina < maxStamina)
+            {
+                stamina += Time.deltaTime;
+            }
+        }
     }
 }
